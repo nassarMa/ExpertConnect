@@ -1,0 +1,9 @@
+# Ignore node_modules, envs, builds, system files, etc.
+node_modules/
+.env
+*.log
+__pycache__/
+*.pyc
+.DS_Store
+dist/
+build/node_modules/
