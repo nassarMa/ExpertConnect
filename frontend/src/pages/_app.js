@@ -1,44 +1,28 @@
+import React from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from '../components/theme';
 import { AuthProvider } from '../context/AuthContext';
 import { CreditProvider } from '../context/CreditContext';
-import { MeetingProvider } from '../context/MeetingContext';
 import { MessagingProvider } from '../context/MessagingContext';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import '../styles/globals.css';
-
-// Create a theme instance
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#3f51b5',
-    },
-    secondary: {
-      main: '#f50057',
-    },
-    background: {
-      default: '#f5f5f5',
-    },
-  },
-  typography: {
-    fontFamily: [
-      'Roboto',
-      'Arial',
-      'sans-serif',
-    ].join(','),
-  },
-});
 
 function MyApp({ Component, pageProps }) {
+  React.useEffect(() => {
+    // Remove the server-side injected CSS when running in browser
+    const jssStyles = document.querySelector('#jss-server-side');
+    if (jssStyles) {
+      jssStyles.parentElement.removeChild(jssStyles);
+    }
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
         <CreditProvider>
-          <MeetingProvider>
-            <MessagingProvider>
-              <Component {...pageProps} />
-            </MessagingProvider>
-          </MeetingProvider>
+          <MessagingProvider>
+            <Component {...pageProps} />
+          </MessagingProvider>
         </CreditProvider>
       </AuthProvider>
     </ThemeProvider>
