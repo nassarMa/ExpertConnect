@@ -1,7 +1,6 @@
 """
 API URLs for the expertconnect project.
 """
-
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from expertconnect.users.views import UserViewSet, UserSkillViewSet, CategoryViewSet, UserAvailabilityViewSet
@@ -25,4 +24,5 @@ router.register(r'notifications', NotificationViewSet , basename = 'notification
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('admin/', include('expertconnect.admin_dashboard.urls')),  # Admin dashboard URLs
 ]
