@@ -8,24 +8,21 @@ import {
   Box, 
   Button, 
   Divider,
-  Chip,
-  Avatar,
   Paper,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Rating,
+  Avatar,
+  Chip,
+  IconButton,
   Skeleton,
   useTheme,
   useMediaQuery
 } from '@mui/material';
 import { 
   Event as EventIcon, 
-  CreditCard as CreditCardIcon, 
+  AccessTime as AccessTimeIcon,
+  CreditCard as CreditCardIcon,
+  ArrowForward as ArrowForwardIcon,
   Star as StarIcon,
-  People as PeopleIcon,
-  ArrowForward as ArrowForwardIcon
+  StarBorder as StarBorderIcon
 } from '@mui/icons-material';
 import Link from 'next/link';
 import Layout from '../components/Layout';
@@ -34,14 +31,11 @@ import { useCreditContext } from '../context/CreditContext';
 
 const Dashboard = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
-  
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { user } = useAuth();
   const { balance, transactions } = useCreditContext();
   const [upcomingMeetings, setUpcomingMeetings] = useState([]);
   const [recentTransactions, setRecentTransactions] = useState([]);
-  const [recommendedExperts, setRecommendedExperts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalMeetings: 0,
@@ -60,7 +54,6 @@ const Dashboard = () => {
           id: 1,
           expertName: 'Dr. Jane Smith',
           expertTitle: 'Senior Software Architect',
-          expertAvatar: '/images/expert-1.jpg',
           date: '2025-03-25',
           time: '14:00',
           duration: 60,
@@ -70,42 +63,10 @@ const Dashboard = () => {
           id: 2,
           expertName: 'Prof. Michael Johnson',
           expertTitle: 'Data Science Specialist',
-          expertAvatar: '/images/expert-2.jpg',
           date: '2025-03-28',
           time: '10:30',
           duration: 30,
           creditsUsed: 50
-        }
-      ]);
-
-      // Mock recommended experts
-      setRecommendedExperts([
-        {
-          id: 1,
-          name: 'Dr. Sarah Williams',
-          title: 'AI Research Scientist',
-          avatar: '/images/expert-1.jpg',
-          rating: 4.9,
-          reviewCount: 42,
-          rate: 80
-        },
-        {
-          id: 2,
-          name: 'James Anderson',
-          title: 'UX/UI Design Consultant',
-          avatar: '/images/expert-2.jpg',
-          rating: 4.7,
-          reviewCount: 38,
-          rate: 65
-        },
-        {
-          id: 3,
-          name: 'Dr. Emily Chen',
-          title: 'Blockchain Developer',
-          avatar: '/images/expert-3.jpg',
-          rating: 4.8,
-          reviewCount: 27,
-          rate: 90
         }
       ]);
 
@@ -176,21 +137,19 @@ const Dashboard = () => {
           >
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} md={6}>
-                <Box>
-                  <Typography variant="h6" fontWeight="medium" sx={{ opacity: 0.8 }}>
-                    Your Credit Balance
+                <Typography variant="h6" fontWeight="medium">
+                  Credit Balance
+                </Typography>
+                {loading ? (
+                  <Skeleton variant="text" width={120} height={60} sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
+                ) : (
+                  <Typography variant="h3" fontWeight="bold" sx={{ my: 1 }}>
+                    {balance}
                   </Typography>
-                  {loading ? (
-                    <Skeleton variant="text" width={150} height={60} sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
-                  ) : (
-                    <Typography variant="h3" fontWeight="bold" sx={{ my: 1 }}>
-                      {balance} credits
-                    </Typography>
-                  )}
-                  <Typography variant="body2" sx={{ opacity: 0.8, mb: 2 }}>
-                    Use your credits to book consultations with experts
-                  </Typography>
-                </Box>
+                )}
+                <Typography variant="body2" sx={{ opacity: 0.8, mb: 2 }}>
+                  Use credits to book consultations with experts
+                </Typography>
               </Grid>
               <Grid item xs={12} md={6} sx={{ textAlign: { xs: 'left', md: 'right' } }}>
                 <Button 
@@ -203,11 +162,10 @@ const Dashboard = () => {
                     color: 'primary.main',
                     '&:hover': {
                       bgcolor: 'rgba(255,255,255,0.9)',
-                    },
-                    px: 3
+                    }
                   }}
                 >
-                  Buy More Credits
+                  Buy Credits
                 </Button>
               </Grid>
             </Grid>
@@ -216,91 +174,102 @@ const Dashboard = () => {
           {/* Stats Cards */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ height: '100%', borderRadius: 3 }}>
+              <Card elevation={2} sx={{ borderRadius: 3, height: '100%' }}>
                 <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Avatar sx={{ bgcolor: 'primary.light', mr: 2 }}>
-                      <EventIcon />
-                    </Avatar>
-                    <Typography variant="h6" color="text.secondary">
-                      Consultations
-                    </Typography>
-                  </Box>
                   {loading ? (
-                    <Skeleton variant="text" height={40} />
+                    <>
+                      <Skeleton variant="text" width="60%" />
+                      <Skeleton variant="text" width="40%" height={60} />
+                      <Skeleton variant="text" width="80%" />
+                    </>
                   ) : (
-                    <Typography variant="h4" fontWeight="bold" color="text.primary">
-                      {stats.totalMeetings}
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-            
-            <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ height: '100%', borderRadius: 3 }}>
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Avatar sx={{ bgcolor: 'error.light', mr: 2 }}>
-                      <CreditCardIcon />
-                    </Avatar>
-                    <Typography variant="h6" color="text.secondary">
-                      Credits Spent
-                    </Typography>
-                  </Box>
-                  {loading ? (
-                    <Skeleton variant="text" height={40} />
-                  ) : (
-                    <Typography variant="h4" fontWeight="bold" color="text.primary">
-                      {stats.totalCreditsSpent}
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-            
-            <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ height: '100%', borderRadius: 3 }}>
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Avatar sx={{ bgcolor: 'success.light', mr: 2 }}>
-                      <CreditCardIcon />
-                    </Avatar>
-                    <Typography variant="h6" color="text.secondary">
-                      Credits Purchased
-                    </Typography>
-                  </Box>
-                  {loading ? (
-                    <Skeleton variant="text" height={40} />
-                  ) : (
-                    <Typography variant="h4" fontWeight="bold" color="text.primary">
-                      {stats.totalCreditsPurchased}
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-            
-            <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ height: '100%', borderRadius: 3 }}>
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Avatar sx={{ bgcolor: 'warning.light', mr: 2 }}>
-                      <StarIcon />
-                    </Avatar>
-                    <Typography variant="h6" color="text.secondary">
-                      Average Rating
-                    </Typography>
-                  </Box>
-                  {loading ? (
-                    <Skeleton variant="text" height={40} />
-                  ) : (
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography variant="h4" fontWeight="bold" color="text.primary" sx={{ mr: 1 }}>
-                        {stats.averageRating.toFixed(1)}
+                    <>
+                      <Typography color="text.secondary" gutterBottom>
+                        Total Consultations
                       </Typography>
-                      <Rating value={stats.averageRating} precision={0.1} readOnly size="small" />
-                    </Box>
+                      <Typography variant="h4" fontWeight="bold" color="text.primary">
+                        {stats.totalMeetings}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Across all categories
+                      </Typography>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card elevation={2} sx={{ borderRadius: 3, height: '100%' }}>
+                <CardContent>
+                  {loading ? (
+                    <>
+                      <Skeleton variant="text" width="60%" />
+                      <Skeleton variant="text" width="40%" height={60} />
+                      <Skeleton variant="text" width="80%" />
+                    </>
+                  ) : (
+                    <>
+                      <Typography color="text.secondary" gutterBottom>
+                        Credits Spent
+                      </Typography>
+                      <Typography variant="h4" fontWeight="bold" color="text.primary">
+                        {stats.totalCreditsSpent}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        On consultations and services
+                      </Typography>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card elevation={2} sx={{ borderRadius: 3, height: '100%' }}>
+                <CardContent>
+                  {loading ? (
+                    <>
+                      <Skeleton variant="text" width="60%" />
+                      <Skeleton variant="text" width="40%" height={60} />
+                      <Skeleton variant="text" width="80%" />
+                    </>
+                  ) : (
+                    <>
+                      <Typography color="text.secondary" gutterBottom>
+                        Credits Purchased
+                      </Typography>
+                      <Typography variant="h4" fontWeight="bold" color="text.primary">
+                        {stats.totalCreditsPurchased}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Total credits bought
+                      </Typography>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card elevation={2} sx={{ borderRadius: 3, height: '100%' }}>
+                <CardContent>
+                  {loading ? (
+                    <>
+                      <Skeleton variant="text" width="60%" />
+                      <Skeleton variant="text" width="40%" height={60} />
+                      <Skeleton variant="text" width="80%" />
+                    </>
+                  ) : (
+                    <>
+                      <Typography color="text.secondary" gutterBottom>
+                        Average Rating
+                      </Typography>
+                      <Typography variant="h4" fontWeight="bold" color="text.primary" sx={{ display: 'flex', alignItems: 'center' }}>
+                        {stats.averageRating.toFixed(1)}
+                        <StarIcon sx={{ ml: 1, color: 'warning.main' }} />
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        From your feedback
+                      </Typography>
+                    </>
                   )}
                 </CardContent>
               </Card>
@@ -310,198 +279,196 @@ const Dashboard = () => {
           {/* Main Content Grid */}
           <Grid container spacing={4}>
             {/* Upcoming Consultations */}
-            <Grid item xs={12} lg={7}>
-              <Card sx={{ borderRadius: 3, height: '100%' }}>
+            <Grid item xs={12} md={7}>
+              <Card elevation={2} sx={{ borderRadius: 3 }}>
                 <CardContent>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                    <Typography variant="h5" fontWeight="bold">
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Typography variant="h6" fontWeight="bold">
                       Upcoming Consultations
                     </Typography>
                     <Button 
                       component={Link}
                       href="/meetings"
                       endIcon={<ArrowForwardIcon />}
+                      color="primary"
                     >
                       View All
                     </Button>
                   </Box>
                   
+                  <Divider sx={{ mb: 2 }} />
+                  
                   {loading ? (
-                    Array.from(new Array(2)).map((_, index) => (
+                    Array(2).fill(0).map((_, index) => (
                       <Box key={index} sx={{ mb: 2 }}>
                         <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 2, mb: 1 }} />
                       </Box>
                     ))
                   ) : upcomingMeetings.length === 0 ? (
                     <Box sx={{ textAlign: 'center', py: 4 }}>
-                      <PeopleIcon sx={{ fontSize: 60, color: 'text.disabled', mb: 2 }} />
-                      <Typography variant="h6" color="text.secondary" gutterBottom>
-                        No upcoming consultations
+                      <Typography variant="body1" color="text.secondary" paragraph>
+                        No upcoming consultations scheduled.
                       </Typography>
                       <Button 
                         variant="contained" 
+                        color="primary"
                         component={Link}
                         href="/experts"
-                        sx={{ mt: 2 }}
                       >
                         Find Experts
                       </Button>
                     </Box>
                   ) : (
-                    <List sx={{ p: 0 }}>
-                      {upcomingMeetings.map((meeting, index) => (
-                        <React.Fragment key={meeting.id}>
-                          <Paper 
-                            elevation={1} 
-                            sx={{ 
-                              p: 2, 
-                              mb: 2,
-                              borderRadius: 2,
-                              transition: 'transform 0.2s, box-shadow 0.2s',
-                              '&:hover': {
-                                transform: 'translateY(-4px)',
-                                boxShadow: 3
-                              }
-                            }}
-                          >
-                            <Grid container spacing={2} alignItems="center">
-                              <Grid item xs={12} sm={7}>
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                  <Avatar 
-                                    src={meeting.expertAvatar} 
-                                    alt={meeting.expertName}
-                                    sx={{ width: 56, height: 56, mr: 2 }}
-                                  />
-                                  <Box>
-                                    <Typography variant="h6" fontWeight="medium">
-                                      {meeting.expertName}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      {meeting.expertTitle}
-                                    </Typography>
-                                  </Box>
-                                </Box>
-                              </Grid>
+                    upcomingMeetings.map((meeting) => (
+                      <Card 
+                        key={meeting.id} 
+                        variant="outlined" 
+                        sx={{ 
+                          mb: 2, 
+                          borderRadius: 2,
+                          '&:last-child': { mb: 0 }
+                        }}
+                      >
+                        <CardContent sx={{ p: 2 }}>
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} sm={7}>
+                              <Typography variant="h6" fontWeight="medium">
+                                {meeting.expertName}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary" gutterBottom>
+                                {meeting.expertTitle}
+                              </Typography>
                               
-                              <Grid item xs={12} sm={5}>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: { xs: 'flex-start', sm: 'flex-end' } }}>
-                                  <Chip 
-                                    icon={<EventIcon />} 
-                                    label={`${formatDate(meeting.date)} at ${formatTime(meeting.time)}`}
-                                    sx={{ mb: 1 }}
-                                  />
-                                  <Typography variant="body2" color="text.secondary">
-                                    {meeting.duration} minutes • {meeting.creditsUsed} credits
+                              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 1 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                  <EventIcon fontSize="small" color="primary" sx={{ mr: 0.5 }} />
+                                  <Typography variant="body2">
+                                    {formatDate(meeting.date)}
                                   </Typography>
                                 </Box>
-                              </Grid>
-                              
-                              <Grid item xs={12}>
-                                <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
-                                  <Button 
-                                    variant="contained" 
-                                    size="small"
-                                    component={Link}
-                                    href={`/meetings/${meeting.id}`}
-                                  >
-                                    Join Meeting
-                                  </Button>
-                                  <Button 
-                                    variant="outlined" 
-                                    size="small"
-                                    component={Link}
-                                    href={`/meetings/${meeting.id}/reschedule`}
-                                  >
-                                    Reschedule
-                                  </Button>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                  <AccessTimeIcon fontSize="small" color="primary" sx={{ mr: 0.5 }} />
+                                  <Typography variant="body2">
+                                    {formatTime(meeting.time)} ({meeting.duration} min)
+                                  </Typography>
                                 </Box>
-                              </Grid>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                  <CreditCardIcon fontSize="small" color="primary" sx={{ mr: 0.5 }} />
+                                  <Typography variant="body2">
+                                    {meeting.creditsUsed} credits
+                                  </Typography>
+                                </Box>
+                              </Box>
                             </Grid>
-                          </Paper>
-                        </React.Fragment>
-                      ))}
-                    </List>
+                            
+                            <Grid item xs={12} sm={5} sx={{ 
+                              display: 'flex', 
+                              flexDirection: { xs: 'row', sm: 'column' }, 
+                              justifyContent: { xs: 'flex-start', sm: 'center' },
+                              alignItems: { xs: 'flex-start', sm: 'flex-end' },
+                              gap: 1
+                            }}>
+                              <Button 
+                                variant="contained" 
+                                color="primary"
+                                fullWidth={!isMobile}
+                              >
+                                Join Meeting
+                              </Button>
+                              <Button 
+                                variant="outlined" 
+                                color="primary"
+                                fullWidth={!isMobile}
+                              >
+                                Reschedule
+                              </Button>
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                      </Card>
+                    ))
                   )}
                 </CardContent>
               </Card>
             </Grid>
             
             {/* Recent Transactions */}
-            <Grid item xs={12} lg={5}>
-              <Card sx={{ borderRadius: 3, height: '100%' }}>
+            <Grid item xs={12} md={5}>
+              <Card elevation={2} sx={{ borderRadius: 3 }}>
                 <CardContent>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                    <Typography variant="h5" fontWeight="bold">
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Typography variant="h6" fontWeight="bold">
                       Recent Transactions
                     </Typography>
                     <Button 
                       component={Link}
                       href="/credits"
                       endIcon={<ArrowForwardIcon />}
+                      color="primary"
                     >
                       View All
                     </Button>
                   </Box>
                   
+                  <Divider sx={{ mb: 2 }} />
+                  
                   {loading ? (
-                    Array.from(new Array(3)).map((_, index) => (
+                    Array(3).fill(0).map((_, index) => (
                       <Box key={index} sx={{ mb: 2 }}>
-                        <Skeleton variant="rectangular" height={70} sx={{ borderRadius: 2, mb: 1 }} />
+                        <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 2, mb: 1 }} />
                       </Box>
                     ))
                   ) : recentTransactions.length === 0 ? (
                     <Box sx={{ textAlign: 'center', py: 4 }}>
-                      <CreditCardIcon sx={{ fontSize: 60, color: 'text.disabled', mb: 2 }} />
-                      <Typography variant="h6" color="text.secondary" gutterBottom>
-                        No recent transactions
+                      <Typography variant="body1" color="text.secondary" paragraph>
+                        No recent transactions.
                       </Typography>
                       <Button 
                         variant="contained" 
+                        color="primary"
                         component={Link}
                         href="/credits"
-                        sx={{ mt: 2 }}
                       >
                         Buy Credits
                       </Button>
                     </Box>
                   ) : (
-                    <List sx={{ p: 0 }}>
-                      {recentTransactions.map((transaction, index) => (
-                        <React.Fragment key={transaction.id}>
-                          <Paper 
-                            elevation={1} 
-                            sx={{ 
-                              p: 2, 
-                              mb: 2,
-                              borderRadius: 2
-                            }}
-                          >
-                            <Grid container spacing={2} alignItems="center">
-                              <Grid item xs={8}>
-                                <Typography variant="subtitle1" fontWeight="medium">
-                                  {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  {formatDateTime(transaction.createdAt)}
-                                </Typography>
-                              </Grid>
-                              <Grid item xs={4} sx={{ textAlign: 'right' }}>
-                                <Typography 
-                                  variant="h6" 
-                                  fontWeight="bold"
-                                  color={transaction.amount > 0 ? 'success.main' : 'error.main'}
-                                >
-                                  {transaction.amount > 0 ? '+' : ''}{transaction.amount}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  Balance: {transaction.balanceAfter}
-                                </Typography>
-                              </Grid>
+                    recentTransactions.map((transaction) => (
+                      <Card 
+                        key={transaction.id} 
+                        variant="outlined" 
+                        sx={{ 
+                          mb: 2, 
+                          borderRadius: 2,
+                          '&:last-child': { mb: 0 }
+                        }}
+                      >
+                        <CardContent sx={{ p: 2 }}>
+                          <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={7}>
+                              <Typography variant="subtitle2" fontWeight="medium">
+                                {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {formatDateTime(transaction.createdAt)}
+                              </Typography>
                             </Grid>
-                          </Paper>
-                        </React.Fragment>
-                      ))}
-                    </List>
+                            <Grid item xs={5} sx={{ textAlign: 'right' }}>
+                              <Typography 
+                                variant="subtitle1" 
+                                fontWeight="bold"
+                                color={transaction.amount > 0 ? 'success.main' : 'error.main'}
+                              >
+                                {transaction.amount > 0 ? '+' : ''}{transaction.amount}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                Balance: {transaction.balanceAfter}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                      </Card>
+                    ))
                   )}
                 </CardContent>
               </Card>
@@ -510,24 +477,27 @@ const Dashboard = () => {
           
           {/* Recommended Experts */}
           <Box sx={{ mt: 4 }}>
-            <Card sx={{ borderRadius: 3 }}>
+            <Card elevation={2} sx={{ borderRadius: 3 }}>
               <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h5" fontWeight="bold">
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Typography variant="h6" fontWeight="bold">
                     Recommended Experts
                   </Typography>
                   <Button 
                     component={Link}
                     href="/experts"
                     endIcon={<ArrowForwardIcon />}
+                    color="primary"
                   >
                     View All
                   </Button>
                 </Box>
                 
+                <Divider sx={{ mb: 3 }} />
+                
                 {loading ? (
                   <Grid container spacing={3}>
-                    {Array.from(new Array(3)).map((_, index) => (
+                    {Array(3).fill(0).map((_, index) => (
                       <Grid item xs={12} sm={6} md={4} key={index}>
                         <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 3 }} />
                       </Grid>
@@ -535,57 +505,68 @@ const Dashboard = () => {
                   </Grid>
                 ) : (
                   <Grid container spacing={3}>
-                    {recommendedExperts.map(expert => (
-                      <Grid item xs={12} sm={6} md={4} key={expert.id}>
+                    {[1, 2, 3].map(id => (
+                      <Grid item xs={12} sm={6} md={4} key={id}>
                         <Card 
                           sx={{ 
                             height: '100%', 
-                            borderRadius: 3,
-                            transition: 'transform 0.3s, box-shadow 0.3s',
+                            display: 'flex', 
+                            flexDirection: 'column',
+                            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                             '&:hover': {
                               transform: 'translateY(-8px)',
-                              boxShadow: 4
+                              boxShadow: theme.shadows[10],
                             }
                           }}
                         >
-                          <Box sx={{ position: 'relative', height: 140 }}>
-                            <Box
-                              component="img"
-                              src={expert.avatar}
-                              alt={expert.name}
+                          <Box sx={{ position: 'relative', paddingTop: '75%', bgcolor: 'grey.100' }}>
+                            <Avatar
+                              src={`/images/expert-${id}.jpg`}
+                              alt={`Expert ${id}`}
+                              variant="rounded"
                               sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
                                 width: '100%',
                                 height: '100%',
-                                objectFit: 'cover',
+                                borderRadius: '16px 16px 0 0'
                               }}
                             />
                           </Box>
-                          <CardContent>
-                            <Typography variant="h6" fontWeight="bold" gutterBottom>
-                              {expert.name}
+                          <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                            <Typography variant="h6" gutterBottom fontWeight="bold">
+                              Dr. Expert Name
                             </Typography>
                             <Typography variant="body2" color="text.secondary" gutterBottom>
-                              {expert.title}
+                              Professional Title
                             </Typography>
                             
-                            <Box sx={{ display: 'flex', alignItems: 'center', my: 1 }}>
-                              <Rating value={expert.rating} precision={0.1} readOnly size="small" />
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, mt: 2 }}>
+                              {[...Array(5)].map((_, i) => (
+                                i < 4 ? 
+                                <StarIcon key={i} sx={{ color: 'warning.main', fontSize: 20 }} /> :
+                                <StarBorderIcon key={i} sx={{ color: 'warning.main', fontSize: 20 }} />
+                              ))}
                               <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                                ({expert.reviewCount})
+                                (42)
                               </Typography>
                             </Box>
                             
-                            <Typography variant="body2" sx={{ mb: 2 }}>
-                              <Box component="span" fontWeight="bold" color="primary.main">
-                                {expert.rate}
-                              </Box> credits/hour
-                            </Typography>
+                            <Chip 
+                              label="80 credits/hour" 
+                              color="primary" 
+                              size="small"
+                              sx={{ mb: 2 }}
+                            />
                             
                             <Button 
                               variant="contained" 
+                              color="primary"
                               fullWidth
                               component={Link}
-                              href={`/experts/${expert.id}`}
+                              href={`/experts/${id}`}
+                              sx={{ mt: 'auto' }}
                             >
                               View Profile
                             </Button>

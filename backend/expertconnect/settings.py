@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'expertconnect.messaging',
     'expertconnect.api',
     'expertconnect.admin_dashboard',
+    'expertconnect.reviews',
+    'expertconnect.discovery',
+    'expertconnect.payments',
 ]
 
 MIDDLEWARE = [

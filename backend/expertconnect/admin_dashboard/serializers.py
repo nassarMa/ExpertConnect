@@ -1,93 +1,102 @@
-"""
-Serializers for the Admin Dashboard.
-"""
 from rest_framework import serializers
-from expertconnect.users.models import User, UserSkill
-from expertconnect.credits.models import Credit, CreditTransaction, PaymentInformation
+from django.contrib.auth import get_user_model
+from django.db.models import Avg
+
+from expertconnect.users.models import User, UserSkill, Category
+from expertconnect.credits.models import Credit, CreditTransaction
 from expertconnect.meetings.models import Meeting, Review
 from .models import AdminSetting, PaymentGatewayConfig, AdminLog
 
+User = get_user_model()
+
+
 class AdminUserSerializer(serializers.ModelSerializer):
     """
-    Serializer for User model with admin-specific fields.
+    Serializer for User model with admin privileges.
     """
-    credit_balance = serializers.IntegerField(read_only=True)
-    total_meetings = serializers.SerializerMethodField()
+    credit_balance = serializers.SerializerMethodField()
     
     class Meta:
         model = User
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name', 
-            'profile_picture', 'bio', 'headline', 'is_verified', 
-            'is_admin', 'date_joined', 'last_login', 'credit_balance',
-            'total_meetings'
+            'is_active', 'is_verified', 'is_staff', 'is_superuser', 'date_joined',
+            'credit_balance', 'bio', 'profile_picture'
         ]
     
-    def get_total_meetings(self, obj):
-        """Get total meetings count for the user"""
-        requested = obj.requested_meetings.count()
-        expert = obj.expert_meetings.count()
-        return requested + expert
+    def get_credit_balance(self, obj):
+        try:
+            credit = Credit.objects.get(user=obj)
+            return credit.balance
+        except Credit.DoesNotExist:
+            return 0
+
 
 class AdminUserSkillSerializer(serializers.ModelSerializer):
     """
-    Serializer for UserSkill model.
+    Serializer for UserSkill model with admin privileges.
     """
+    category_name = serializers.ReadOnlyField(source='category.name')
+    
     class Meta:
         model = UserSkill
         fields = '__all__'
 
+
+class AdminCategorySerializer(serializers.ModelSerializer):
+    """
+    Serializer for Category model with admin privileges.
+    """
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+
 class AdminCreditSerializer(serializers.ModelSerializer):
     """
-    Serializer for Credit model.
+    Serializer for Credit model with admin privileges.
     """
-    username = serializers.CharField(source='user.username', read_only=True)
+    username = serializers.ReadOnlyField(source='user.username')
     
     class Meta:
         model = Credit
-        fields = ['id', 'user', 'username', 'balance', 'updated_at']
+        fields = '__all__'
+
 
 class AdminCreditTransactionSerializer(serializers.ModelSerializer):
     """
-    Serializer for CreditTransaction model.
+    Serializer for CreditTransaction model with admin privileges.
     """
-    username = serializers.CharField(source='user.username', read_only=True)
+    username = serializers.ReadOnlyField(source='user.username')
     
     class Meta:
         model = CreditTransaction
         fields = '__all__'
 
-class AdminPaymentInformationSerializer(serializers.ModelSerializer):
-    """
-    Serializer for PaymentInformation model.
-    """
-    username = serializers.CharField(source='user.username', read_only=True)
-    
-    class Meta:
-        model = PaymentInformation
-        fields = '__all__'
 
 class AdminMeetingSerializer(serializers.ModelSerializer):
     """
-    Serializer for Meeting model.
+    Serializer for Meeting model with admin privileges.
     """
-    requester_name = serializers.CharField(source='requester.username', read_only=True)
-    expert_name = serializers.CharField(source='expert.username', read_only=True)
+    client_name = serializers.ReadOnlyField(source='client.username')
+    expert_name = serializers.ReadOnlyField(source='expert.username')
     
     class Meta:
         model = Meeting
         fields = '__all__'
 
+
 class AdminReviewSerializer(serializers.ModelSerializer):
     """
-    Serializer for Review model.
+    Serializer for Review model with admin privileges.
     """
-    reviewer_name = serializers.CharField(source='reviewer.username', read_only=True)
-    reviewee_name = serializers.CharField(source='reviewee.username', read_only=True)
+    reviewer_name = serializers.ReadOnlyField(source='reviewer.username')
+    reviewee_name = serializers.ReadOnlyField(source='reviewee.username')
     
     class Meta:
         model = Review
         fields = '__all__'
+
 
 class AdminSettingSerializer(serializers.ModelSerializer):
     """
@@ -96,12 +105,18 @@ class AdminSettingSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdminSetting
         fields = '__all__'
-        
+        extra_kwargs = {
+            'value': {'write_only': False}
+        }
+    
     def get_extra_kwargs(self):
         extra_kwargs = super().get_extra_kwargs()
-        if self.instance and self.instance.is_sensitive:
-            extra_kwargs.setdefault('value', {})['write_only'] = True
+        # Only apply this logic for a single instance, not a list
+        if hasattr(self, 'instance') and self.instance and not isinstance(self.instance, list):
+            if self.instance.is_sensitive:
+                extra_kwargs.setdefault('value', {})['write_only'] = True
         return extra_kwargs
+
 
 class PaymentGatewayConfigSerializer(serializers.ModelSerializer):
     """
@@ -111,20 +126,20 @@ class PaymentGatewayConfigSerializer(serializers.ModelSerializer):
         model = PaymentGatewayConfig
         fields = '__all__'
         extra_kwargs = {
-            'api_key': {'write_only': True},
-            'api_secret': {'write_only': True},
+            'api_secret': {'write_only': True}
         }
+
 
 class AdminLogSerializer(serializers.ModelSerializer):
     """
     Serializer for AdminLog model.
     """
-    admin_username = serializers.CharField(source='admin_user.username', read_only=True)
+    admin_username = serializers.ReadOnlyField(source='admin_user.username')
     
     class Meta:
         model = AdminLog
         fields = '__all__'
-        read_only_fields = ['admin_user', 'ip_address', 'created_at']
+
 
 class DashboardStatsSerializer(serializers.Serializer):
     """
@@ -132,8 +147,8 @@ class DashboardStatsSerializer(serializers.Serializer):
     """
     total_users = serializers.IntegerField()
     active_users = serializers.IntegerField()
-    total_credits_purchased = serializers.IntegerField()
     total_revenue = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total_credits_purchased = serializers.IntegerField()
     total_meetings = serializers.IntegerField()
     completed_meetings = serializers.IntegerField()
     average_rating = serializers.FloatField()

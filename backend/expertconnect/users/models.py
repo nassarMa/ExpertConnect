@@ -1,7 +1,6 @@
 """
 User models for the ExpertConnect platform.
 """
-
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
@@ -11,10 +10,44 @@ class User(AbstractUser):
     Custom User model for ExpertConnect platform.
     Extends Django's AbstractUser to add profile-related fields.
     """
+    # User role choices
+    ROLE_CONSUMER = 'consumer'
+    ROLE_PROVIDER = 'provider'
+    ROLE_BOTH = 'both'
+    
+    ROLE_CHOICES = (
+        (ROLE_CONSUMER, _('Consumer')),
+        (ROLE_PROVIDER, _('Provider')),
+        (ROLE_BOTH, _('Both')),
+    )
+    
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
     bio = models.TextField(blank=True)
     headline = models.CharField(max_length=100, blank=True)
     is_verified = models.BooleanField(default=False)
+    
+    # New fields for role-based access
+    role = models.CharField(
+        max_length=10, 
+        choices=ROLE_CHOICES, 
+        default=ROLE_CONSUMER,
+        help_text=_('User role determines access and capabilities')
+    )
+    
+    # Provider-specific fields
+    hourly_rate = models.PositiveIntegerField(
+        default=0, 
+        help_text=_('Hourly rate in credits (only for providers)')
+    )
+    is_available_for_hire = models.BooleanField(
+        default=False,
+        help_text=_('Whether the provider is currently accepting new clients')
+    )
+    
+    # Verification fields
+    email_verified = models.BooleanField(default=False)
+    phone_number = models.CharField(max_length=20, blank=True)
+    phone_verified = models.BooleanField(default=False)
     
     def __str__(self):
         return self.username
@@ -30,6 +63,17 @@ class User(AbstractUser):
             return self.credits.balance
         except:
             return 0
+    
+    @property
+    def is_consumer(self):
+        """Check if user has consumer role"""
+        return self.role in [self.ROLE_CONSUMER, self.ROLE_BOTH]
+    
+    @property
+    def is_provider(self):
+        """Check if user has provider role"""
+        return self.role in [self.ROLE_PROVIDER, self.ROLE_BOTH]
+
 
 class UserSkill(models.Model):
     """
@@ -53,6 +97,7 @@ class UserSkill(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.skill_name} ({self.skill_level})"
 
+
 class Category(models.Model):
     """
     Model to store expertise categories.
@@ -66,6 +111,7 @@ class Category(models.Model):
         
     def __str__(self):
         return self.name
+
 
 class UserAvailability(models.Model):
     """

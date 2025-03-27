@@ -1,18 +1,35 @@
-"""
-URLs for the Admin Dashboard.
-"""
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from . import views
+
+from .views import (
+    AdminUserViewSet,
+    AdminCreditTransactionViewSet,
+    PaymentGatewayConfigViewSet,
+    AdminSettingViewSet,
+    AdminLogViewSet,
+    DashboardStatsView
+)
 
 router = DefaultRouter()
-router.register(r'users', views.AdminUserViewSet)
-router.register(r'transactions', views.AdminCreditTransactionViewSet)
-router.register(r'payment-gateways', views.PaymentGatewayConfigViewSet)
-router.register(r'settings', views.AdminSettingViewSet)
-router.register(r'logs', views.AdminLogViewSet)
+router.register(r'users', AdminUserViewSet, basename='admin-users')
+router.register(
+    r'transactions', 
+    AdminCreditTransactionViewSet, 
+    basename='admin-transactions'
+)
+router.register(
+    r'payment-gateways', 
+    PaymentGatewayConfigViewSet, 
+    basename='admin-payment-gateways'
+)
+router.register(
+    r'settings', 
+    AdminSettingViewSet, 
+    basename='admin-settings'
+)
+router.register(r'logs', AdminLogViewSet, basename='admin-logs')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('stats/', views.DashboardStatsView.as_view(), name='dashboard-stats'),
+    path('stats/', DashboardStatsView.as_view(), name='admin-stats'),
 ]
