@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useMeetings } from '../../context/MeetingContext';
-import { useAuth } from '../../context/AuthContext';
+import { useMeetings } from '@/context/MeetingContext';
+import { useAuth } from '@/context/AuthContext';
+import Layout from '@/components/Layout';
 import {
   Container,
   Grid,
@@ -17,7 +18,6 @@ import {
 import {
   Send as SendIcon
 } from '@mui/icons-material';
-import Layout from '../../components/Layout';
 import { format } from 'date-fns';
 
 export default function MeetingDetail() {

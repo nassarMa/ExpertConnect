@@ -1,0 +1,392 @@
+.dashboardContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .dashboardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .dashboardHeader h1 {
+    margin: 0;
+    color: #333;
+  }
+  
+  .userWelcome {
+    font-size: 1.1rem;
+  }
+  
+  .userName {
+    font-weight: bold;
+    color: #4a6cf7;
+  }
+  
+  .creditSummary {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .creditBalance h2 {
+    margin-top: 0;
+    color: #333;
+  }
+  
+  .balanceAmount {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #4a6cf7;
+    margin: 1rem 0;
+  }
+  
+  .buyCreditsButton {
+    display: inline-block;
+    background-color: #4a6cf7;
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+  }
+  
+  .buyCreditsButton:hover {
+    background-color: #3a5bd9;
+  }
+  
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .statCard {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .statCard:hover {
+    transform: translateY(-5px);
+  }
+  
+  .statValue {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #4a6cf7;
+    margin-bottom: 0.5rem;
+  }
+  
+  .statLabel {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+  
+  .dashboardGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .dashboardSection {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .sectionHeader h2 {
+    margin: 0;
+    color: #333;
+  }
+  
+  .viewAllLink {
+    color: #4a6cf7;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .viewAllLink:hover {
+    text-decoration: underline;
+  }
+  
+  .emptyState {
+    text-align: center;
+    padding: 2rem 0;
+    color: #6c757d;
+  }
+  
+  .actionButton {
+    display: inline-block;
+    background-color: #4a6cf7;
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .actionButton:hover {
+    background-color: #3a5bd9;
+  }
+  
+  .meetingsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .meetingCard {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .meetingInfo h3 {
+    margin: 0 0 0.25rem 0;
+    color: #333;
+  }
+  
+  .expertTitle {
+    color: #6c757d;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .meetingDetails {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .meetingDetail {
+    font-size: 0.9rem;
+  }
+  
+  .detailLabel {
+    font-weight: 500;
+    margin-right: 0.25rem;
+  }
+  
+  .meetingActions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .primaryButton, .secondaryButton {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .primaryButton {
+    background-color: #4a6cf7;
+    color: white;
+  }
+  
+  .primaryButton:hover {
+    background-color: #3a5bd9;
+  }
+  
+  .secondaryButton {
+    background-color: #e9ecef;
+    color: #495057;
+  }
+  
+  .secondaryButton:hover {
+    background-color: #dee2e6;
+  }
+  
+  .transactionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .transactionCard {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .transactionType {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 0.25rem;
+  }
+  
+  .transactionDate {
+    font-size: 0.8rem;
+    color: #6c757d;
+  }
+  
+  .transactionAmount {
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-align: right;
+  }
+  
+  .positive {
+    color: #28a745;
+  }
+  
+  .negative {
+    color: #dc3545;
+  }
+  
+  .transactionBalance {
+    font-size: 0.8rem;
+    color: #6c757d;
+  }
+  
+  .recommendedExperts {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .expertsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .expertCard {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .expertCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .expertImageContainer {
+    height: 150px;
+    overflow: hidden;
+  }
+  
+  .expertImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .expertCardInfo {
+    padding: 1rem;
+  }
+  
+  .expertCardInfo h3 {
+    margin: 0 0 0.25rem 0;
+    color: #333;
+  }
+  
+  .expertCardTitle {
+    color: #6c757d;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .expertCardRating {
+    margin-bottom: 0.5rem;
+  }
+  
+  .starFilled {
+    color: #ffc107;
+  }
+  
+  .starEmpty {
+    color: #e5e5e5;
+  }
+  
+  .ratingCount {
+    color: #6c757d;
+    margin-left: 0.25rem;
+    font-size: 0.8rem;
+  }
+  
+  .expertCardRate {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .rateValue {
+    font-weight: bold;
+    color: #4a6cf7;
+  }
+  
+  .viewProfileButton {
+    display: block;
+    background-color: #4a6cf7;
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+  }
+  
+  .viewProfileButton:hover {
+    background-color: #3a5bd9;
+  }
+  
+  @media (max-width: 768px) {
+    .dashboardGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .meetingCard, .transactionCard {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .meetingActions {
+      margin-top: 1rem;
+      width: 100%;
+    }
+    
+    .transactionAmount {
+      margin-top: 0.5rem;
+      text-align: left;
+    }
+  }
+  

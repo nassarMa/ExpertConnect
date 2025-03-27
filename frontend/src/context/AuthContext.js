@@ -1,87 +1,102 @@
-import { createContext, useState, useEffect, useContext } from 'react';
-import { useRouter } from 'next/router';
-import { authAPI } from '../api';
+import React, { createContext, useState, useEffect,useContext } from 'react';
+import axios from 'axios';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const router = useRouter();
 
+  // Check if user is logged in on component mount
   useEffect(() => {
-    // Check if user is logged in
-    const checkUserLoggedIn = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          const response = await authAPI.getUser();
-          setUser(response.data);
+    const checkLoggedIn = async () => {
+      if (localStorage.getItem('token')) {
+        try {
+          const res = await axios.get('/api/auth/user', {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+          setUser(res.data);
+          setIsAuthenticated(true);
+          setError(null);
+        } catch (err) {
+          console.error('Error checking authentication:', err);
+          localStorage.removeItem('token');
+          setUser(null);
+          setIsAuthenticated(false);
+          setError('Authentication failed. Please log in again.');
         }
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-        localStorage.removeItem('token');
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
-    checkUserLoggedIn();
+    checkLoggedIn();
   }, []);
 
-  const login = async (credentials) => {
+  // Register user
+  const register = async (formData) => {
+    setLoading(true);
     try {
-      setLoading(true);
+      const res = await axios.post('/api/auth/register', formData);
+      localStorage.setItem('token', res.data.token);
+      setUser(res.data.user);
+      setIsAuthenticated(true);
       setError(null);
-      const response = await authAPI.login(credentials);
-      localStorage.setItem('token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
-      
-      // Get user data
-      const userResponse = await authAPI.getUser();
-      setUser(userResponse.data);
-      
-      return true;
-    } catch (error) {
-      setError(error.response?.data?.detail || 'Login failed. Please check your credentials.');
-      return false;
+      return { success: true };
+    } catch (err) {
+      console.error('Registration error:', err);
+      setError(err.response?.data?.message || 'Registration failed');
+      return { success: false, error: err.response?.data?.message || 'Registration failed' };
     } finally {
       setLoading(false);
     }
   };
 
-  const register = async (userData) => {
+  // Login user
+  const login = async (email, password) => {
+    setLoading(true);
     try {
-      setLoading(true);
+      const res = await axios.post('/api/auth/login', { email, password });
+      localStorage.setItem('token', res.data.token);
+      setUser(res.data.user);
+      setIsAuthenticated(true);
       setError(null);
-      await authAPI.register(userData);
-      return true;
-    } catch (error) {
-      setError(error.response?.data || 'Registration failed. Please try again.');
-      return false;
+      return { success: true };
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err.response?.data?.message || 'Invalid credentials');
+      return { success: false, error: err.response?.data?.message || 'Invalid credentials' };
     } finally {
       setLoading(false);
     }
   };
 
+  // Logout user
   const logout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('refresh_token');
     setUser(null);
-    router.push('/login');
+    setIsAuthenticated(false);
   };
 
-  const updateProfile = async (profileData) => {
+  // Update user profile
+  const updateProfile = async (formData) => {
+    setLoading(true);
     try {
-      setLoading(true);
+      const res = await axios.put('/api/auth/profile', formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setUser(res.data);
       setError(null);
-      const response = await authAPI.updateProfile(profileData);
-      setUser(response.data);
-      return true;
-    } catch (error) {
-      setError(error.response?.data || 'Failed to update profile. Please try again.');
-      return false;
+      return { success: true };
+    } catch (err) {
+      console.error('Profile update error:', err);
+      setError(err.response?.data?.message || 'Profile update failed');
+      return { success: false, error: err.response?.data?.message || 'Profile update failed' };
     } finally {
       setLoading(false);
     }
@@ -91,12 +106,13 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        isAuthenticated,
         loading,
         error,
-        login,
         register,
+        login,
         logout,
-        updateProfile,
+        updateProfile
       }}
     >
       {children}
@@ -104,6 +120,23 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export default AuthProvider;
+export const useAuth = () => {
+  const context = useContext(AuthContext);
 
-export default AuthContext;
+  if (!context) {
+    // Return safe defaults so destructuring doesn't break the app during SSR
+    return {
+      user: null,
+      isAuthenticated: false,
+      loading: false,
+      error: null,
+      register: async () => ({ success: false }),
+      login: async () => ({ success: false }),
+      logout: () => {},
+      updateProfile: async () => ({ success: false }),
+    };
+  }
+
+  return context;
+};

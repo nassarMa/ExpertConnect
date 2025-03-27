@@ -1,0 +1,26 @@
+ExpertConnect AWS Deployment Information
+=======================================
+Environment: prod
+Region: us-east-1
+Stack Name: expertconnect-prod
+
+Access URLs:
+-----------
+CloudFront URL: https://d2uacivjgcffoz.cloudfront.net
+Load Balancer URL: http://prod-expertconnect-alb-1457769372.us-east-1.elb.amazonaws.com
+
+Database:
+--------
+Endpoint: expertconnect-prod-database-nyoreywczjnh.c03a8qsicdd0.us-east-1.rds.amazonaws.com
+Username: expertconnect
+Password: 96f1ff211a80c2ccc02d43916c7132f3
+
+Storage:
+-------
+S3 Bucket: prod-expertconnect-static
+
+Security:
+--------
+Django Secret Key: nm9a8wxa08oZ7YI0FtQ3EJ1GQagGGC56/9rkoTXX9HM=
+
+Deployment Date: Thu Mar 27 22:53:46 IST 2025

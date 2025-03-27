@@ -178,7 +178,7 @@ Resources:
     Properties:
       DBName: expertconnect
       Engine: postgres
-      EngineVersion: 13.4
+      EngineVersion: 17.2
       DBInstanceClass: db.t3.small
       AllocatedStorage: 20
       StorageType: gp2
@@ -323,8 +323,8 @@ Resources:
       NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
-      ExecutionRoleArn: !Ref ECSTaskExecutionRole
-      TaskRoleArn: !Ref ECSTaskExecutionRole
+      ExecutionRoleArn: arn:aws:iam::801010597810:role/expertconnect-prod-ECSTaskExecutionRole
+      TaskRoleArn: arn:aws:iam::801010597810:role/expertconnect-prod-ECSTaskExecutionRole
       ContainerDefinitions:
         - Name: backend
           Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/expertconnect-backend:latest
@@ -369,8 +369,8 @@ Resources:
       NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
-      ExecutionRoleArn: !Ref ECSTaskExecutionRole
-      TaskRoleArn: !Ref ECSTaskExecutionRole
+      ExecutionRoleArn: arn:aws:iam::801010597810:role/expertconnect-prod-ECSTaskExecutionRole
+      TaskRoleArn: arn:aws:iam::801010597810:role/expertconnect-prod-ECSTaskExecutionRole
       ContainerDefinitions:
         - Name: frontend
           Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/expertconnect-frontend:latest
@@ -435,7 +435,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 30
-      HealthCheckPath: /api/health/
+      HealthCheckPath: /
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
@@ -450,7 +450,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 30
-      HealthCheckPath: /
+      HealthCheckPath: /health
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2

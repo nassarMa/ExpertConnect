@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { userAPI } from '../api';
-import { useAuth } from '../context/AuthContext';
+import { userAPI } from '@/api';
+import { useAuth } from '@/context/AuthContext';
+import Layout from '@/components/Layout';
 import {
   Container,
   Grid,
@@ -21,7 +22,6 @@ import {
   ListItemText,
   ListItemAvatar
 } from '@mui/material';
-import Layout from '../components/Layout';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

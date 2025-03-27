@@ -45,20 +45,20 @@ aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS 
 # Build and push Docker images
 echo "Building and pushing backend Docker image..."
 cd backend
-docker build -t ${ECR_BACKEND_REPO}:latest .
+docker buildx build --platform linux/amd64 -t ${ECR_BACKEND_REPO}:latest .
 docker tag ${ECR_BACKEND_REPO}:latest $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_BACKEND_REPO}:latest
 docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_BACKEND_REPO}:latest
 cd ..
 
 echo "Building and pushing frontend Docker image..."
 cd frontend
-docker build -t ${ECR_FRONTEND_REPO}:latest .
+docker buildx build --platform linux/amd64 -t ${ECR_FRONTEND_REPO}:latest .
 docker tag ${ECR_FRONTEND_REPO}:latest $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_FRONTEND_REPO}:latest
 docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_FRONTEND_REPO}:latest
 cd ..
 
 # Generate random password and secret key
-DB_PASSWORD=$(openssl rand -base64 12)
+DB_PASSWORD=$(openssl rand -hex 16)
 DJANGO_SECRET_KEY=$(openssl rand -base64 32)
 
 # Deploy CloudFormation stack

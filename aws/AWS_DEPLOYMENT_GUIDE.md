@@ -80,14 +80,14 @@ If you prefer to deploy manually or need more control over the process:
    
    # Build and push backend
    cd backend
-   docker build -t expertconnect-backend:latest .
+   docker buildx build --platform linux/amd64 -t expertconnect-backend:latest .
    docker tag expertconnect-backend:latest $(aws sts get-caller-identity --query Account --output text).dkr.ecr.us-east-1.amazonaws.com/expertconnect-backend:latest
    docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.us-east-1.amazonaws.com/expertconnect-backend:latest
    cd ..
    
    # Build and push frontend
    cd frontend
-   docker build -t expertconnect-frontend:latest .
+   docker buildx build --platform linux/amd64 -t expertconnect-frontend:latest .
    docker tag expertconnect-frontend:latest $(aws sts get-caller-identity --query Account --output text).dkr.ecr.us-east-1.amazonaws.com/expertconnect-frontend:latest
    docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.us-east-1.amazonaws.com/expertconnect-frontend:latest
    cd ..
@@ -96,7 +96,7 @@ If you prefer to deploy manually or need more control over the process:
 3. Deploy CloudFormation stack:
    ```bash
    # Generate secure passwords
-   DB_PASSWORD=$(openssl rand -base64 12)
+   DB_PASSWORD=$(LC_ALL=C tr -dc 'A-Za-z0-9!#$%^&*()_+=[]{}|:,.?~' < /dev/urandom | head -c 16)
    DJANGO_SECRET_KEY=$(openssl rand -base64 32)
    
    # Deploy stack

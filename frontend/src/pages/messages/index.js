@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useAuth } from '../context/AuthContext';
-import { useMessaging } from '../context/MessagingContext';
+import { useAuth } from '@/context/AuthContext';
+import { useMessaging } from '@/context/MessagingContext';
+import Layout from '@/components/Layout';
 import {
   Container,
   Grid,
@@ -23,9 +24,9 @@ import {
 import {
   Send as SendIcon,
   Person as PersonIcon
-} from '@mui/icons-material';
-import Layout from '../components/Layout';
-import { userAPI } from '../api';
+}
+from '@mui/icons-material';
+import { userAPI } from '@/api';
 import io from 'socket.io-client';
 
 export default function Messages() {
